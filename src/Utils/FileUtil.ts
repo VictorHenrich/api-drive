@@ -1,5 +1,6 @@
 import { 
     createWriteStream, 
+    createReadStream,
     WriteStream,
     ReadStream,
     existsSync,
@@ -10,11 +11,13 @@ import { join } from "path";
 import mimeTypes from "src/Constants/MimeTypes";
 import MimeTypeNotFoundError from "src/Exceptions/MimeTypeNotFoundError";
 import IMimeType from "src/Patterns/Interfaces/IMimeType";
-import { Readable } from "stream";
+import { Readable, Writable } from "stream";
+const JWT = require('jsonwebtoken');
 
 
 type FileBuffer = Buffer | string;
 
+const SECRET_KEY =  "MINHA_CHAVE_SECRETA";
 
 export default class FileUtil{
 
@@ -79,5 +82,25 @@ export default class FileUtil{
 
         if(!pathExists)
             await mkdirSync(path);
+    }
+
+    public static readFile(
+        path: string,
+        filename: string,
+        encoding: BufferEncoding = "utf-8"
+    ): Readable{
+        let path_: string = join(path, filename);
+
+        let readStream: ReadStream = createReadStream(path_, { encoding });
+
+        return readStream;
+    }
+
+    public static encodeJWT(payload: any): string{
+        return JWT.sign(payload, SECRET_KEY);
+    }
+
+    public static decodeJWT(token: string): any{
+        return JWT.verify(token, SECRET_KEY);
     }
 }

@@ -33,8 +33,11 @@ const mimeTypes: IMimeType[] = [
     {
         extension: "pnj",
         type: "image/png"
+    },
+    {
+        extension: "txt",
+        type: "plain/txt"
     }
-
 ];
 
 
