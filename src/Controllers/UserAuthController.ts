@@ -3,7 +3,7 @@ import {
     Body,
     Post
 } from '@nestjs/common';
-import UserNotFoundError from 'src/Exceptions/UserNotFound';
+import UserNotFoundError from 'src/Exceptions/UserNotFoundError';
 import BaseResponse from 'src/Responses/BaseResponse';
 import ResponseFailure from 'src/Responses/ResponseFailure';
 import ResponseSuccess from 'src/Responses/ResponseSuccess';

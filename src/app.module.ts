@@ -48,5 +48,9 @@ export class AppModule {
           {path: "user", method: RequestMethod.POST}
         )
         .forRoutes(UserController);
+
+      consumer
+          .apply(AuthTokenMiddleware)
+          .forRoutes(DriveController);
   }
 }

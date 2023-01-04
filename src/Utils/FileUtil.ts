@@ -59,22 +59,20 @@ export default class FileUtil{
     }
 
     public static writeFile(
-        content: Readable,
+        content: Buffer,
         path: string,
         filename: string,
         encoding: BufferEncoding = "utf-8"
     ): void{
         FileUtil.createPathNotExist(path);
 
+        let readableStream: Readable = Readable.from(content);
+
         let fullPath: string = join(path, filename);
 
-        let stream: WriteStream = createWriteStream(fullPath, { encoding });
+        let writableStream: WriteStream = createWriteStream(fullPath, { encoding });
 
-        content.pipe(stream); 
-    }
-
-    public static bufferToReadStream(buffer: Buffer): Readable{
-        return Readable.from(buffer);
+        readableStream.pipe(writableStream); 
     }
 
     public static async createPathNotExist(path: string): Promise<void>{

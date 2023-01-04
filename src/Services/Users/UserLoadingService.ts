@@ -18,7 +18,10 @@ export default class UserLoadingService extends BaseService<UserLoadingServicePr
                 try{
                     const userFindOneRepository: UserFindOneRepository = new UserFindOneRepository(transaction);
 
-                    let user: User = await userFindOneRepository.find('id_uuid', userUuid);
+                    let user: User = await userFindOneRepository.find({
+                        column: "id_uuid",
+                        value: userUuid
+                    });
 
                     resolve(user);
 

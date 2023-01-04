@@ -1,6 +1,6 @@
 import User from "src/Models/User";
 import AuthRepository from "src/Patterns/Repository/AuthRepository";
-import UserNotFoundError from "src/Exceptions/UserNotFound";
+import UserNotFoundError from "src/Exceptions/UserNotFoundError";
 
 
 interface IUserAuthentication{

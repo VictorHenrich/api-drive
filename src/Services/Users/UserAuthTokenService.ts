@@ -31,7 +31,10 @@ export default class UserAuthTokenService extends BaseService<UserAuthTokenServi
                     if(expired <= Date.now())
                         throw new ExpiredTokenError();
 
-                    let user: User = await userFindOneRepository.find('id_uuid', userUuid);
+                    let user: User = await userFindOneRepository.find({
+                        column: "id_uuid",
+                        value: userUuid
+                    });
     
                     resolve(user);
 

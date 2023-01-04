@@ -2,11 +2,17 @@ import {
     Controller,
     Post,
     Body,
-    Get
+    Get,
+    Req,
+    Param,
+    StreamableFile
 } from '@nestjs/common';
+import IRequestAuthUser from 'src/Patterns/Interfaces/IResquestAuthUser';
 import BaseResponse from 'src/Responses/BaseResponse';
 import ResponseSuccess from 'src/Responses/ResponseSuccess';
-import UploadFileService from 'src/Services/Drives/UploadFileService';
+import DownloadDriveService from 'src/Services/Drives/DownloadDriveService';
+import UploadDriveService from 'src/Services/Drives/UploadDriveService';
+import { Readable } from 'stream';
 import { DataSource } from 'typeorm';
 
 
@@ -28,20 +34,34 @@ export default class DriveController{
     }
 
     @Post()
-    upload(@Body() bodyRequest: BodyUploadFile): BaseResponse{
-        const uploadFileService: UploadFileService = new UploadFileService(this.dataSource);
+    upload(
+        @Body() bodyRequest: BodyUploadFile,
+        @Req() request: IRequestAuthUser
+    ): BaseResponse{
+        const uploadDriveService: UploadDriveService = new UploadDriveService(this.dataSource);
 
-        uploadFileService.execute(bodyRequest);
+        uploadDriveService.execute({
+            ...bodyRequest,
+            user: request.authUser
+        });
 
         return new ResponseSuccess();
     }
 
-    @Get()
-    download(@Body() bodyRequest: BodyUploadFile): BaseResponse{
-        const uploadFileService: UploadFileService = new UploadFileService(this.dataSource);
+    @Get(':driveUuid')
+    async download(
+        @Req() request: IRequestAuthUser,
+        @Param('driveUuid') driveUuid: string
+    ): Promise<StreamableFile>{
 
-        uploadFileService.execute(bodyRequest);
+        const downloadDriveService: DownloadDriveService = new DownloadDriveService(this.dataSource);
 
-        return new ResponseSuccess();
+        let stream: Readable = 
+            await downloadDriveService.execute({
+                driveUuid,
+                user: request.authUser
+            });
+
+        return new StreamableFile(stream);
     }
 }

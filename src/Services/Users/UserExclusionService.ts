@@ -18,7 +18,10 @@ export default class UserExclusionService extends BaseService<UserExclusionServi
             const userFindOneRepository: UserFindOneRepository =  new UserFindOneRepository(transaction);
             const userDeleteRepository: UserDeleteRepository = new UserDeleteRepository(transaction);
 
-            let user: User = await userFindOneRepository.find("id_uuid", userUuid);
+            let user: User = await userFindOneRepository.find({
+                column: "id_uuid",
+                value: userUuid
+            });
 
             await userDeleteRepository.delete({ user });
         });

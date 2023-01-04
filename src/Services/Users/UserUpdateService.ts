@@ -25,7 +25,10 @@ export default class UserUpdateService extends BaseService<UserUpdateServiceProp
             const userFindRepository: UserFindOneRepository = new UserFindOneRepository(transaction);
             const userUpdateRepository: UserUpdateRepository = new UserUpdateRepository(transaction);
             
-            let user: User = await userFindRepository.find("id_uuid", userUuid);
+            let user: User = await userFindRepository.find({
+                column: "id_uuid",
+                value: userUuid
+            });
 
             await userUpdateRepository.update({
                 user,
