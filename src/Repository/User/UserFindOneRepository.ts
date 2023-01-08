@@ -1,14 +1,15 @@
 import UserNotFoundError from "src/Exceptions/UserNotFoundError";
 import User from "src/Models/User";
-import FindRepository, { FindRepositoryProps } from "src/Patterns/Repository/FindRepository";
+import FindRepository, { IFindOneRepositoryDefault } from "src/Patterns/Repository/FindRepository";
 
 
+type UserFindOneRepositoryProps = IFindOneRepositoryDefault<"id" | "id_uuid">;
 
-export default class UserFindOneRepository extends FindRepository<User>{
+export default class UserFindOneRepository extends FindRepository<User, UserFindOneRepositoryProps>{
     async find({
         column,
         value
-    }: FindRepositoryProps<"id" | "id_uuid">): Promise<User> {
+    }: UserFindOneRepositoryProps): Promise<User> {
         return await User
                     .findOneByOrFail({ [column]: value })
                     .catch(() => {

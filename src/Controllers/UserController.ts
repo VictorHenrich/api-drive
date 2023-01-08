@@ -5,10 +5,11 @@ import {
     Put,
     Delete,
     Body,
-    Req
+    Req,
+    Res
 } from '@nestjs/common';
+import { Response } from 'express';
 import IRequestAuthUser from 'src/Patterns/Interfaces/IResquestAuthUser';
-import BaseResponse from 'src/Responses/BaseResponse';
 import ResponseSuccess from 'src/Responses/ResponseSuccess';
 import UserCreationService from 'src/Services/Users/UserCreationService';
 import UserExclusionService from 'src/Services/Users/UserExclusionService';
@@ -34,33 +35,44 @@ export default class UserController{
 
     @Post()
     async create(
-        @Body() bodyRequest: IBodyRegistrationUser
-    ): Promise<BaseResponse>{
+        @Body() bodyRequest: IBodyRegistrationUser,
+        @Res() response: Response
+    ): Promise<void>{
         const userCreationService: UserCreationService = new UserCreationService(this.dataSource);
 
         await userCreationService.execute({ ...bodyRequest });
 
-        return new ResponseSuccess();
+        let responseJson: ResponseSuccess = new ResponseSuccess();
+
+        response
+            .status(responseJson.statusCode)
+            .json(responseJson);
     }
 
     @Put()
     async update(
         @Body() bodyRequest: IBodyRegistrationUser,
-        @Req() request: IRequestAuthUser
-    ): Promise<BaseResponse>{
+        @Req() request: IRequestAuthUser,
+        @Res() response: Response
+    ): Promise<void>{
         let { authUser }: IRequestAuthUser = request;
 
         const userUpdateService: UserUpdateService = new UserUpdateService(this.dataSource);
 
         await userUpdateService.execute({ ...bodyRequest, userUuid: authUser.id_uuid });
 
-        return new ResponseSuccess();
+        let responseJson: ResponseSuccess = new ResponseSuccess();
+
+        response
+            .status(responseJson.statusCode)
+            .json(responseJson);
     }
 
     @Delete()
     async delete(
-        @Req() request: IRequestAuthUser
-    ): Promise<BaseResponse>{
+        @Req() request: IRequestAuthUser,
+        @Res() response: Response
+    ): Promise<void>{
 
         let { authUser }: IRequestAuthUser = request;
 
@@ -68,17 +80,21 @@ export default class UserController{
 
         await userExclusionService.execute({ userUuid: authUser.id_uuid });
 
-        return new ResponseSuccess();
+        let responseJson: ResponseSuccess = new ResponseSuccess();
+
+        response
+            .status(responseJson.statusCode)
+            .json(responseJson);
     }
 
     @Get()
     load(
-        @Req() request: IRequestAuthUser
-    ): BaseResponse{
+        @Req() request: IRequestAuthUser,
+        @Res() response: Response
+    ): void{
         let { authUser }: IRequestAuthUser = request;
 
-        
-        return new ResponseSuccess({
+        let responseJson: ResponseSuccess = new ResponseSuccess({
             data: {
                 uuid: authUser.id_uuid,
                 email: authUser.email,
@@ -86,5 +102,8 @@ export default class UserController{
             }
         });
 
+        response
+            .status(responseJson.statusCode)
+            .json(responseJson);
     }
 }

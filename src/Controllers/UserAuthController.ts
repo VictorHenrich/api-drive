@@ -1,10 +1,11 @@
 import { 
     Controller,
     Body,
-    Post
+    Post,
+    Res
 } from '@nestjs/common';
+import { Response } from 'express';
 import UserNotFoundError from 'src/Exceptions/UserNotFoundError';
-import BaseResponse from 'src/Responses/BaseResponse';
 import ResponseFailure from 'src/Responses/ResponseFailure';
 import ResponseSuccess from 'src/Responses/ResponseSuccess';
 import UserAuthLoginService from 'src/Services/Users/UserAuthLoginService';
@@ -26,16 +27,28 @@ export default class UserAuthController{
     }
 
     @Post()
-    async authUserLogin(@Body() bodyRequest: UserAuthBody): Promise<BaseResponse>{
+    async authUserLogin(
+        @Body() bodyRequest: UserAuthBody, 
+        @Res() response: Response
+    ): Promise<void>{
         try{
             const userAuthLoginService = new UserAuthLoginService(this.dataSource);
 
             let token: string = await userAuthLoginService.execute({ ...bodyRequest });
 
-            return new ResponseSuccess({ data: token });
+            let responseJson: ResponseSuccess = new ResponseSuccess({ data: token });
+
+            response
+                .status(responseJson.statusCode)
+                .json(responseJson);
+
         }catch(error){
+            let responseJsonError: ResponseFailure = new ResponseFailure({ data: error.message });
+
             if(error instanceof UserNotFoundError)
-                return new ResponseFailure({ data: error.message });
+                response
+                    .status(responseJsonError.statusCode)
+                    .json(responseJsonError);
 
             else
                 throw error;

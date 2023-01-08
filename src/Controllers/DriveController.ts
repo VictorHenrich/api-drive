@@ -5,12 +5,13 @@ import {
     Get,
     Req,
     Param,
-    StreamableFile
+    Res
 } from '@nestjs/common';
+import { Response } from 'express';
 import IRequestAuthUser from 'src/Patterns/Interfaces/IResquestAuthUser';
-import BaseResponse from 'src/Responses/BaseResponse';
 import ResponseSuccess from 'src/Responses/ResponseSuccess';
 import DownloadDriveService from 'src/Services/Drives/DownloadDriveService';
+import DriveListingService from 'src/Services/Drives/DriveListingService';
 import UploadDriveService from 'src/Services/Drives/UploadDriveService';
 import { Readable } from 'stream';
 import { DataSource } from 'typeorm';
@@ -36,8 +37,9 @@ export default class DriveController{
     @Post()
     upload(
         @Body() bodyRequest: BodyUploadFile,
-        @Req() request: IRequestAuthUser
-    ): BaseResponse{
+        @Req() request: IRequestAuthUser,
+        @Res() response: Response
+    ): void{
         const uploadDriveService: UploadDriveService = new UploadDriveService(this.dataSource);
 
         uploadDriveService.execute({
@@ -45,14 +47,19 @@ export default class DriveController{
             user: request.authUser
         });
 
-        return new ResponseSuccess();
+        let responseJson: ResponseSuccess = new ResponseSuccess();
+
+        response
+            .status(responseJson.statusCode)
+            .json(responseJson);
     }
 
     @Get(':driveUuid')
     async download(
         @Req() request: IRequestAuthUser,
-        @Param('driveUuid') driveUuid: string
-    ): Promise<StreamableFile>{
+        @Param('driveUuid') driveUuid: string,
+        @Res() response: Response
+    ): Promise<void>{
 
         const downloadDriveService: DownloadDriveService = new DownloadDriveService(this.dataSource);
 
@@ -62,6 +69,34 @@ export default class DriveController{
                 user: request.authUser
             });
 
-        return new StreamableFile(stream);
+        stream.pipe(response);
+    }
+
+    @Get()
+    async listing(
+        @Req() request: IRequestAuthUser,
+        @Res() response: Response
+    ){
+
+        const driveListingService: DriveListingService = new DriveListingService(this.dataSource);
+
+        let drives: any[] = 
+            await driveListingService
+                    .execute(({ user: request.authUser }))
+                    .then((data) => {
+                        return data
+                                    .map(({ filename, id_uuid: uuid })=> {
+                                        return {
+                                            filename,
+                                            uuid
+                                        }
+                                    });
+                    });
+
+        let responseJson: ResponseSuccess = new ResponseSuccess({ data: drives });
+
+        response
+            .status(responseJson.statusCode)
+            .json(responseJson);
     }
 }

@@ -3,9 +3,9 @@ import { AppModule } from './app.module';
 import { urlencoded, json } from 'express';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, { cors: true });
 
-    app.use(json({ limit: '50mb'}));
+    app.use(json({ limit: '50mb' }));
     
     await app.listen(3000);
 }
