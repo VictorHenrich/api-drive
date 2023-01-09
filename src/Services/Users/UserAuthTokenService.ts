@@ -4,6 +4,7 @@ import IPayloadJWT from "src/Patterns/Interfaces/IPayloaJWT";
 import BaseService from "src/Patterns/Service/BaseService";
 import UserFindOneRepository from "src/Repository/User/UserFindOneRepository";
 import FileUtil from "src/Utils/FileUtil";
+import JWTUtil from "src/Utils/JWTUtil";
 
 
 
@@ -26,7 +27,7 @@ export default class UserAuthTokenService extends BaseService<UserAuthTokenServi
                     let {
                         userUuid,
                         expired
-                    }: IPayloadJWT = FileUtil.decodeJWT(tokenTreated);
+                    }: IPayloadJWT = JWTUtil.decodeJWT(tokenTreated);
     
                     if(expired <= Date.now())
                         throw new ExpiredTokenError();

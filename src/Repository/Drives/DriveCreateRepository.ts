@@ -5,6 +5,7 @@ import CreateRepository from "src/Patterns/Repository/CreateRepository";
 
 
 interface IDriveCreate{
+    filetype: string,
     filename: string,
     path: string,
     user: User,
@@ -14,6 +15,7 @@ interface IDriveCreate{
 
 export default class DriveCreateRepostory extends CreateRepository<IDriveCreate, Drives>{
     async create({
+        filetype,
         filename,
         path,
         user
@@ -21,6 +23,7 @@ export default class DriveCreateRepostory extends CreateRepository<IDriveCreate,
        
         let drive: Drives = new Drives();
 
+        drive.filetype = filetype;
         drive.filename = filename;
         drive.path = path;
         drive.iduser = user.id;

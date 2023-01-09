@@ -4,6 +4,7 @@ import IPayloadJWT from "src/Patterns/Interfaces/IPayloaJWT";
 import BaseService from "src/Patterns/Service/BaseService";
 import UserFindOneRepository from "src/Repository/User/UserFindOneRepository";
 import FileUtil from "src/Utils/FileUtil";
+import JWTUtil from "src/Utils/JWTUtil";
 import UserAuthTokenService from "./UserAuthTokenService";
 
 
@@ -30,7 +31,7 @@ export default class UserAuthRefreshTokenService extends BaseService<UserAuthRef
                         expired: Date.now() + (60000 ^ minutesExpired)
                     };
             
-                    let token: string = FileUtil.encodeJWT(payload);
+                    let token: string = JWTUtil.encodeJWT(payload);
         
                     resolve(`Bearer ${token}`);
 

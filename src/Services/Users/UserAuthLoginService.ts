@@ -3,6 +3,7 @@ import IPayloadJWT from "src/Patterns/Interfaces/IPayloaJWT";
 import BaseService from "src/Patterns/Service/BaseService";
 import UserAuthRepository from "src/Repository/User/UserAuthRepository";
 import FileUtil from "src/Utils/FileUtil";
+import JWTUtil from "src/Utils/JWTUtil";
 
 
 export interface UserAuthLoginServiceProps{
@@ -33,7 +34,7 @@ export default class UserAuthLoginService extends BaseService<UserAuthLoginServi
                         expired: Date.now() + (60000 ^ minutesExpired)
                     };
             
-                    let token: string = FileUtil.encodeJWT(payload);
+                    let token: string = JWTUtil.encodeJWT(payload);
         
                     resolve(`Bearer ${token}`);
                 });

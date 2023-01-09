@@ -5,6 +5,7 @@ import DriveCreateRepostory from "src/Repository/Drives/DriveCreateRepository";
 import Drives from "src/Models/Drives";
 import User from "src/Models/User";
 import { join } from "path";
+import Base64Util from 'src/Utils/Base64Util';
 
 
 type FileContent = Buffer | string;
@@ -29,18 +30,19 @@ export default class UploadDriveService extends BaseService<UploadDriveProps, vo
 
             let fullUserPath: string = join(fileUploadPath, user.id_uuid);
 
-            let [, fileType ]: string[] = filename.split('.');
+            let [filename_, filetype ]: string[] = filename.split('.');
 
             let drive: Drives = 
                 await driveCreateRepository.create({
-                    filename,
+                    filetype,
+                    user,
                     path: fullUserPath,
-                    user
+                    filename: filename_
                 });
 
-            let fullFileName: string = `${drive.id_uuid}.${fileType}`;
+            let fullFileName: string = `${drive.id_uuid}.${drive.filetype}`;
 
-            let fileContent: Buffer = FileUtil.decodeBase64(content);
+            let fileContent: Buffer = Base64Util.decodeBase64(content);
 
             FileUtil.writeFile(fileContent, fullUserPath, fullFileName);
         });

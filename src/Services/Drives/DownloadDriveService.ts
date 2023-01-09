@@ -30,12 +30,10 @@ export default class DownloadDriveService extends BaseService<DownloadFileProps,
                         user,
                     });
 
-                    let [, fileType ] = drive.filename.split('.');
-
                     let stream: Readable = 
                         FileUtil.readFile(
                             drive.path,
-                            `${drive.id_uuid}.${fileType}`
+                            `${drive.id_uuid}.${drive.filetype}`
                         );
 
                     resolve(stream);

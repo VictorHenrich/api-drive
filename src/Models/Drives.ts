@@ -19,6 +19,9 @@ export default class Drives extends BaseEntity{
     public filename: string;
 
     @Column({ nullable: false })
+    public filetype: string;
+
+    @Column({ nullable: false })
     public path: string;
 
     @Column({ nullable: false })

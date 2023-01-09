@@ -6,7 +6,7 @@ interface IUserUpdate{
     user: User,
     name: string,
     email: string,
-    password: string
+    password?: string
 }
 
 
@@ -19,7 +19,9 @@ export default class UserUpdateRepository extends UpdateRepository<IUserUpdate>{
     }: IUserUpdate): Promise<void> {
         user.email = email;
         user.name = name;
-        user.password = password;
+
+        if(password)
+            user.password = password;
 
         await this.transaction.save(user);
     }

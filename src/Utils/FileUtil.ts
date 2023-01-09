@@ -4,20 +4,17 @@ import {
     WriteStream,
     ReadStream,
     existsSync,
-    mkdirSync
+    mkdirSync,
+    rm
 } from "fs";
 import { join } from "path";
 
 import mimeTypes from "src/Constants/MimeTypes";
 import MimeTypeNotFoundError from "src/Exceptions/MimeTypeNotFoundError";
 import IMimeType from "src/Patterns/Interfaces/IMimeType";
-import { Readable, Writable } from "stream";
-const JWT = require('jsonwebtoken');
+import { Readable } from "stream";
 
 
-type FileBuffer = Buffer | string;
-
-const SECRET_KEY =  "MINHA_CHAVE_SECRETA";
 
 export default class FileUtil{
 
@@ -34,28 +31,6 @@ export default class FileUtil{
             throw new MimeTypeNotFoundError();
 
         return mimeTypeFound;
-    }
-
-    public static encodeBase64(content: FileBuffer): string{
-        let buffer: string;
-
-        if(content instanceof Buffer)
-            buffer = content.toString();
-        else
-            buffer = `${content}`;
-
-        return Buffer.from(buffer, 'base64').toString();
-    }
-
-    public static decodeBase64(content: FileBuffer): Buffer{
-        let buffer: string;
-
-        if(content instanceof Buffer)
-            buffer = buffer.toString()
-        else
-            buffer = `${content}`;
-
-        return Buffer.from(buffer, "base64");
     }
 
     public static writeFile(
@@ -82,6 +57,19 @@ export default class FileUtil{
             await mkdirSync(path);
     }
 
+    public static async removeFile(path: string): Promise<void>{
+        return new Promise((resolve, reject) => {
+            rm(path, (error) => {
+
+                if(error)
+                    reject(error);
+
+                else
+                    resolve();
+            });
+        })
+    }
+
     public static readFile(
         path: string,
         filename: string,
@@ -92,13 +80,5 @@ export default class FileUtil{
         let readStream: ReadStream = createReadStream(path_, { encoding });
 
         return readStream;
-    }
-
-    public static encodeJWT(payload: any): string{
-        return JWT.sign(payload, SECRET_KEY);
-    }
-
-    public static decodeJWT(token: string): any{
-        return JWT.verify(token, SECRET_KEY);
     }
 }

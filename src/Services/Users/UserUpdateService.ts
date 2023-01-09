@@ -9,7 +9,7 @@ interface UserUpdateServiceProps{
     userUuid: string,
     email: string,
     name: string,
-    password: string
+    password?: string
 }
 
 
