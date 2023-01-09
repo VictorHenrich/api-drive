@@ -5,7 +5,8 @@ import {
     Get,
     Req,
     Param,
-    Res
+    Res,
+    StreamableFile
 } from '@nestjs/common';
 import { Response } from 'express';
 import IRequestAuthUser from 'src/Patterns/Interfaces/IResquestAuthUser';
@@ -35,14 +36,14 @@ export default class DriveController{
     }
 
     @Post()
-    upload(
+    async upload(
         @Body() bodyRequest: BodyUploadFile,
         @Req() request: IRequestAuthUser,
         @Res() response: Response
-    ): void{
+    ): Promise<void>{
         const uploadDriveService: UploadDriveService = new UploadDriveService(this.dataSource);
 
-        uploadDriveService.execute({
+        await uploadDriveService.execute({
             ...bodyRequest,
             user: request.authUser
         });
@@ -57,9 +58,8 @@ export default class DriveController{
     @Get(':driveUuid')
     async download(
         @Req() request: IRequestAuthUser,
-        @Param('driveUuid') driveUuid: string,
-        @Res() response: Response
-    ): Promise<void>{
+        @Param('driveUuid') driveUuid: string
+    ): Promise<StreamableFile>{
 
         const downloadDriveService: DownloadDriveService = new DownloadDriveService(this.dataSource);
 
@@ -69,7 +69,7 @@ export default class DriveController{
                 user: request.authUser
             });
 
-        stream.pipe(response);
+        return new StreamableFile(stream);
     }
 
     @Get()

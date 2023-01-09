@@ -23,6 +23,8 @@ export default class UploadDriveService extends BaseService<UploadDriveProps, vo
         user
     }: UploadDriveProps): Promise<void> {
         await this.dataSource.transaction(async transaction => {
+            await FileUtil.createPathNotExist(fileUploadPath)
+
             const driveCreateRepository: DriveCreateRepostory = new DriveCreateRepostory(transaction);
 
             let fullUserPath: string = join(fileUploadPath, user.id_uuid);
