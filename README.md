@@ -3,6 +3,11 @@
 <br>
 <br>
 
+**Essa documentação é feita para consulta das rotas, essa api esta em suas fases iniciais, por isso muitas das funcionalidades serão atualizadas e otimizadas para que seja o mais amigável possível para nossos usuários.**
+
+<br>
+<br>
+
 > ## *(POST)* /auth
 
  <br/>
