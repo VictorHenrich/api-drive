@@ -6,7 +6,6 @@ import {
     Req,
     Param,
     Res,
-    StreamableFile,
     Delete,
     Put
 } from '@nestjs/common';
@@ -49,36 +48,59 @@ export default class DriveController{
         @Body() bodyRequest: BodyUploadFile,
         @Req() request: IRequestAuthUser,
         @Res() response: Response
-    ): Promise<void>{
-        const uploadDriveService: UploadDriveService = new UploadDriveService(this.dataSource);
+    ): Promise<any>{
+        try{
 
-        await uploadDriveService.execute({
-            ...bodyRequest,
-            user: request.authUser
-        });
+            const uploadDriveService: UploadDriveService = new UploadDriveService(this.dataSource);
 
-        let responseJson: ResponseSuccess = new ResponseSuccess();
+            await uploadDriveService.execute({
+                ...bodyRequest,
+                user: request.authUser
+            });
 
-        response
-            .status(responseJson.statusCode)
-            .json(responseJson);
+            let responseJson: ResponseSuccess = new ResponseSuccess();
+
+            return response
+                        .status(responseJson.statusCode)
+                        .json(responseJson);
+
+        }catch(error){
+            let responseErrorJson: ResponseFailure = new ResponseFailure({ data: error.message });
+
+            return response
+                    .status(responseErrorJson.statusCode)
+                    .json(responseErrorJson);
+        }
     }
 
     @Get(':driveUuid')
     async download(
         @Req() request: IRequestAuthUser,
+        @Res() response: Response,
         @Param('driveUuid') driveUuid: string
-    ): Promise<StreamableFile>{
+    ): Promise<any>{
 
-        const downloadDriveService: DownloadDriveService = new DownloadDriveService(this.dataSource);
+        try{
 
-        let stream: Readable = 
-            await downloadDriveService.execute({
-                driveUuid,
-                user: request.authUser
-            });
+            const downloadDriveService: DownloadDriveService = new DownloadDriveService(this.dataSource);
 
-        return new StreamableFile(stream);
+            let stream: Readable = 
+                await downloadDriveService.execute({
+                    driveUuid,
+                    user: request.authUser
+                });
+
+            response.status(200);
+
+            return stream.pipe(response);
+
+        }catch(error){
+            let responseErrorJson: ResponseFailure = new ResponseFailure({ data: error.message });
+
+            return response
+                    .status(responseErrorJson.statusCode)
+                    .json(responseErrorJson);
+        }
     }
 
     @Get()
