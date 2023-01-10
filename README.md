@@ -1,3 +1,37 @@
+# INICIALIZANDO PROJETO
+
+<br>
+<br>
+
+**Para inicializar o projeto, é necessário acessar a pasta raiz do projeto e instalar os módulos necessários para a criação do servidor HTTP. Para isso execute o seguinte comando de acordo com seu gerenciador de pacotes.**
+
+<br>
+<br>
+
+> **NPM** = `npm install`
+
+> **YARN** = `yarn install`
+
+
+<br>
+<br>
+
+**Após a instalação dos módulos, será necessário executar o servidor para rodar seus serviços necessários para utilização da API. Para isso execute o seguinte comando**
+
+<br>
+<br>
+
+> **NPM** = `npm start`
+
+> **YARN** = `yarn start`
+
+
+<br>
+<br>
+<br>
+<br>
+
+
 # DOCUMENTAÇÃO API DRIVE
 
 <br>
