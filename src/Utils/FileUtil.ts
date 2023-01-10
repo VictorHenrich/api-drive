@@ -36,8 +36,7 @@ export default class FileUtil{
     public static writeFile(
         content: Buffer,
         path: string,
-        filename: string,
-        encoding: BufferEncoding = "utf-8"
+        filename: string
     ): void{
         FileUtil.createPathNotExist(path);
 
@@ -45,7 +44,7 @@ export default class FileUtil{
 
         let fullPath: string = join(path, filename);
 
-        let writableStream: WriteStream = createWriteStream(fullPath, { encoding });
+        let writableStream: WriteStream = createWriteStream(fullPath);
 
         readableStream.pipe(writableStream); 
     }
@@ -72,12 +71,11 @@ export default class FileUtil{
 
     public static readFile(
         path: string,
-        filename: string,
-        encoding: BufferEncoding = "utf-8"
+        filename: string
     ): Readable{
         let path_: string = join(path, filename);
 
-        let readStream: ReadStream = createReadStream(path_, { encoding });
+        let readStream: ReadStream = createReadStream(path_);
 
         return readStream;
     }
